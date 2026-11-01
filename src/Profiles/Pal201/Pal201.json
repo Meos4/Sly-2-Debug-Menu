@@ -1,0 +1,16 @@
+{
+  "id": "Pal201",
+  "crc": "15DD1F6F",
+  "title": "Sly 2 PAL 2.01",
+  "header": "Profiles/Pal201/Pal201.h",
+  "offsets_header": "Profiles/Pal201/Pal201Offsets.h",
+  "linker": "src/Profiles/Pal201/Pal201.ld",
+  "sources": [
+    "src/Profiles/Common/NativeWorlds.c",
+    "src/Profiles/Common/NativeWorldsBridge.S",
+    "src/Profiles/Common/WorldNamesPal.c"
+  ],
+  "output": "build",
+  "serial": "SCES_525.29",
+  "build": "1006.2123"
+}

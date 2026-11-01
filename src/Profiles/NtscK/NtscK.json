@@ -1,0 +1,17 @@
+{
+  "id": "NtscK",
+  "crc": "518DD841",
+  "title": "Sly 2 NTSC-K",
+  "header": "Profiles/NtscK/NtscK.h",
+  "offsets_header": "Profiles/NtscK/NtscKOffsets.h",
+  "linker": "src/Profiles/NtscK/NtscK.ld",
+  "sources": [
+    "src/Profiles/Common/NativeWorlds.c",
+    "src/Profiles/Common/NativeWorldsBridge.S",
+    "src/Profiles/Common/WideText.S",
+    "src/Profiles/Common/WorldNamesNtscJK.c"
+  ],
+  "output": "build",
+  "serial": "SCKA_200.44",
+  "build": "1221.1745"
+}

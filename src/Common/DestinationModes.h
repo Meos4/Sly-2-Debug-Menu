@@ -1,0 +1,7 @@
+#ifndef SLY_DESTINATION_MODES_H
+#define SLY_DESTINATION_MODES_H
+
+#define DEST_CHECKPOINTS 4
+#define DEST_ENTRANCES 5
+
+#endif

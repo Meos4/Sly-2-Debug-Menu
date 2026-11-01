@@ -1,0 +1,15 @@
+#ifndef SLY_BUTTONS_H
+#define SLY_BUTTONS_H
+
+#define PAD_SELECT 0x0100
+#define PAD_R1 0x0008
+#define PAD_START 0x0800
+#define PAD_TRIANGLE 0x0010
+#define PAD_CROSS 0x0040
+#define PAD_LEFT 0x8000
+#define PAD_RIGHT 0x2000
+
+#define PAD_MENU_CHORD (PAD_R1 | PAD_SELECT)
+#define PAD_ORBIT_SWITCH (PAD_LEFT | PAD_RIGHT)
+
+#endif

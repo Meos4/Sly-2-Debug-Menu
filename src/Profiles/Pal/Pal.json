@@ -1,0 +1,16 @@
+{
+  "id": "Pal",
+  "crc": "FDA1CBF6",
+  "title": "Sly 2 PAL 1.0",
+  "header": "Profiles/Pal/Pal.h",
+  "offsets_header": "Profiles/Pal/PalOffsets.h",
+  "linker": "src/Profiles/Pal/Pal.ld",
+  "sources": [
+    "src/Profiles/Common/NativeWorlds.c",
+    "src/Profiles/Common/NativeWorldsBridge.S",
+    "src/Profiles/Common/WorldNamesPal.c"
+  ],
+  "output": "build",
+  "serial": "SCES_525.29",
+  "build": "0914.1846"
+}

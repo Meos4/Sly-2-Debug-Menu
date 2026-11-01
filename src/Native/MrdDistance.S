@@ -1,0 +1,35 @@
+.set noreorder
+.set noat
+.set gp=64
+.set hardfloat
+.option pic0
+.section .native.MrdDistance,"ax",@progbits
+.global MrdDistance_start
+MrdDistance_start:
+	addiu	$sp,$sp,-48
+	sq	$a3,0($sp)
+	lwc1	$f1,28($a0)
+	.word 0x48A51800
+	lui	$a3,%lo(Game_nativeCamera_rawHi)
+	ori	$a3,$a3,%lo(Game_nativeCamera)
+	bne	$a0,$a3,.L_resumeDistance
+	sll	$zero,$zero,0x0
+	lui	$a3,%lo(Mrd_mode_rawHi)
+	ori	$a3,$a3,%lo(Mrd_mode)
+	lw	$a3,0($a3)
+	bnez	$a3,.L_resumeDistance
+	sll	$zero,$zero,0x0
+	.word 0xFBA50010
+	.word 0xFBA60020
+	.word 0xD8850090
+	lui	$a3,%lo(Mrd_position_rawHi)
+	ori	$a3,$a3,%lo(Mrd_position)
+	.word 0xD8E60000
+	.word 0x4BE518E8
+	.word 0x4BE618EC
+	.word 0xDBA50010
+	.word 0xDBA60020
+.L_resumeDistance:
+	lq	$a3,0($sp)
+	j	Game_distanceResume
+	addiu	$sp,$sp,48

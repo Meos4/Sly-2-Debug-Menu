@@ -1,0 +1,572 @@
+#include "Common/DestinationModes.h"
+#include SLY_PROFILE_OFFSETS
+.set noreorder
+.set noat
+.set gp=64
+.set hardfloat
+.option pic0
+.section .native.Destinations,"ax",@progbits
+.global Destinations_capture_task
+Destinations_capture_task:
+	daddu	$a1,$s2,$zero
+	lw	$t0,PROFILE_TASK_CHECKPOINT($a1)
+	addiu	$t1,$zero,-1
+	bne	$t0,$t1,Destinations_capture
+	sll	$zero,$zero,0x0
+	j	Game_skipName
+	sll	$zero,$zero,0x0
+.global Destinations_capture_entrance
+Destinations_capture_entrance:
+	addiu	$sp,$sp,-64
+	sd	$ra,56($sp)
+	sq	$s0,32($sp)
+	sq	$s1,16($sp)
+	daddu	$s0,$a0,$zero
+	daddu	$s1,$a1,$zero
+	jal	Game_loadAlo
+	sll	$zero,$zero,0x0
+	daddu	$a0,$s1,$zero
+	jal	Destinations_capture
+	daddu	$a1,$s0,$zero
+	lq	$s0,32($sp)
+	lq	$s1,16($sp)
+	ld	$ra,56($sp)
+	jr	$ra
+	addiu	$sp,$sp,64
+.global Destinations_capture
+Destinations_capture:
+	addiu	$sp,$sp,-96
+	sd	$ra,88($sp)
+	sq	$s0,64($sp)
+	sq	$s1,48($sp)
+	sq	$s2,32($sp)
+	sq	$s3,16($sp)
+	daddu	$s0,$a0,$zero
+	daddu	$s1,$a1,$zero
+.L_cacheSlotReplacement:
+	move $a0,$s1
+	jal Entry_nameSlot
+	nop
+	bnez $v0,.L_cacheSlotReady
+	move $s2,$v0
+	move $a0,$s0
+	jal Game_skipName
+	nop
+	b Destinations_capture_done
+	nop
+.L_cacheSlotReady:
+	b Destinations_capture_found
+	nop
+	.space 0x54-(.-.L_cacheSlotReplacement),0
+.global Destinations_capture_found
+Destinations_capture_found:
+	sw	$s1,0($s2)
+	lw	$t0,24($s1)
+	sw	$t0,4($s2)
+	sw	$zero,8($s2)
+	sw	$zero,12($s2)
+	sw	$zero,16($s2)
+	sw	$zero,20($s2)
+	sw	$zero,24($s2)
+	sw	$zero,28($s2)
+	sw	$zero,32($s2)
+	sw	$zero,36($s2)
+	sw	$zero,40($s2)
+	sw	$zero,44($s2)
+	sw	$zero,48($s2)
+	sw	$zero,52($s2)
+	sw	$zero,56($s2)
+	sw	$zero,60($s2)
+	jal	Game_readNameLength
+	daddu	$a0,$s0,$zero
+	daddu	$s3,$v0,$zero
+	sltiu	$t0,$s3,48
+	bnez	$t0,Destinations_capture_length
+	daddu	$a1,$s3,$zero
+	addiu	$a1,$zero,47
+.global Destinations_capture_length
+Destinations_capture_length:
+	sw	$a1,0($sp)
+	daddu	$a0,$s0,$zero
+	jal	Game_readBytes
+	addiu	$a2,$s2,8
+	lw	$t0,0($sp)
+	subu	$a1,$s3,$t0
+	beqz	$a1,Destinations_capture_done
+	sll	$zero,$zero,0x0
+	daddu	$a0,$s0,$zero
+	jal	Game_readBytes
+	daddu	$a2,$zero,$zero
+.global Destinations_capture_done
+Destinations_capture_done:
+	lq	$s0,64($sp)
+	lq	$s1,48($sp)
+	lq	$s2,32($sp)
+	lq	$s3,16($sp)
+	ld	$ra,88($sp)
+	jr	$ra
+	addiu	$sp,$sp,96
+.global Destinations_name
+Destinations_name:
+.L_cacheLookupReplacement:
+	j NameCache_lookup
+	nop
+	.space 0x44-(.-.L_cacheLookupReplacement),0
+.global Destinations_copy
+Destinations_copy:
+	daddu	$v0,$a0,$zero
+.global Destinations_copy_loop
+Destinations_copy_loop:
+	beqz	$a2,Destinations_copy_end
+	sll	$zero,$zero,0x0
+	lbu	$t0,0($a1)
+	beqz	$t0,Destinations_copy_end
+	sll	$zero,$zero,0x0
+	sb	$t0,0($v0)
+	addiu	$v0,$v0,1
+	addiu	$a1,$a1,1
+	addiu	$a2,$a2,-1
+	beqz	$zero,Destinations_copy_loop
+	sll	$zero,$zero,0x0
+.global Destinations_copy_end
+Destinations_copy_end:
+	jr	$ra
+	sb	$zero,0($v0)
+.global Destinations_append
+Destinations_append:
+	addiu	$sp,$sp,-80
+	sd	$ra,72($sp)
+	sq	$s0,48($sp)
+	sq	$s1,32($sp)
+	sq	$s2,16($sp)
+	daddu	$s0,$a0,$zero
+	daddu	$s1,$a1,$zero
+	jal	Destinations_name
+	sll	$zero,$zero,0x0
+	beqz	$v0,Destinations_append_missing
+	daddu	$a1,$v0,$zero
+	addiu	$t0,$zero,DEST_ENTRANCES
+	bne	$s5,$t0,Destinations_append_name_ready
+	sll	$zero,$zero,0x0
+.L_prefixReplacement:
+	daddu $a0,$a1,$zero
+	jal Names_entrance
+	nop
+	daddu $a1,$v0,$zero
+	b Destinations_append_name_ready
+	nop
+	.space 0x144-(.-.L_prefixReplacement),0
+.global Destinations_append_name_ready
+Destinations_append_name_ready:
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	lw	$t1,0($t0)
+	sltiu	$t2,$t1,256
+	beqz	$t2,Destinations_append_done
+	sll	$zero,$zero,0x0
+	sll	$t2,$t1,0x6
+	lui	$s2,%lo(Destinations_entries_rawHi)
+	ori	$s2,$s2,%lo(Destinations_entries)
+	addu	$s2,$s2,$t2
+	addiu	$t1,$t1,1
+	sw	$t1,0($t0)
+	sw	$zero,0($s2)
+	sw	$zero,4($s2)
+	sw	$zero,8($s2)
+	sw	$zero,12($s2)
+	sw	$zero,16($s2)
+	sw	$zero,20($s2)
+	sw	$zero,24($s2)
+	sw	$zero,28($s2)
+	sw	$zero,32($s2)
+	sw	$zero,36($s2)
+	sw	$zero,40($s2)
+	sw	$zero,44($s2)
+	sw	$zero,48($s2)
+	sw	$zero,52($s2)
+	sw	$zero,56($s2)
+	sw	$zero,60($s2)
+	sw	$s0,56($s2)
+	lw	$t0,24($s0)
+	sw	$t0,52($s2)
+	daddu	$a0,$s2,$zero
+	addiu	$a2,$zero,47
+	beqz	$s1,Destinations_append_copy
+	sll	$zero,$zero,0x0
+	addiu	$a2,$zero,37
+.global Destinations_append_copy
+Destinations_append_copy:
+	jal	Destinations_copy
+	sll	$zero,$zero,0x0
+	beqz	$s1,Destinations_append_done
+	sll	$zero,$zero,0x0
+	daddu	$a0,$v0,$zero
+	lui	$a1,%lo(MenuData_currentSuffix_rawHi)
+	ori	$a1,$a1,%lo(MenuData_currentSuffix)
+	jal	Destinations_copy
+	addiu	$a2,$zero,10
+	beqz	$zero,Destinations_append_done
+	sll	$zero,$zero,0x0
+.global Destinations_append_missing
+Destinations_append_missing:
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	addiu	$t1,$zero,1
+	sw	$t1,12($t0)
+.global Destinations_append_done
+Destinations_append_done:
+	lq	$s0,48($sp)
+	lq	$s1,32($sp)
+	lq	$s2,16($sp)
+	ld	$ra,72($sp)
+	jr	$ra
+	addiu	$sp,$sp,80
+.global Destinations_compare_names
+Destinations_compare_names:
+	lbu	$t0,0($a0)
+	addiu	$t2,$t0,-97
+	sltiu	$t2,$t2,26
+	beqz	$t2,Destinations_compare_folded_t0
+	sll	$zero,$zero,0x0
+	addiu	$t0,$t0,-32
+.global Destinations_compare_folded_t0
+Destinations_compare_folded_t0:
+	lbu	$t1,0($a1)
+	addiu	$t2,$t1,-97
+	sltiu	$t2,$t2,26
+	beqz	$t2,Destinations_compare_folded_t1
+	sll	$zero,$zero,0x0
+	addiu	$t1,$t1,-32
+.global Destinations_compare_folded_t1
+Destinations_compare_folded_t1:
+	bne	$t0,$t1,Destinations_compare_end
+	sll	$zero,$zero,0x0
+	beqz	$t0,Destinations_compare_end
+	sll	$zero,$zero,0x0
+	addiu	$a0,$a0,1
+	addiu	$a1,$a1,1
+	beqz	$zero,Destinations_compare_names
+	sll	$zero,$zero,0x0
+.global Destinations_compare_end
+Destinations_compare_end:
+	jr	$ra
+	subu	$v0,$t0,$t1
+.global Destinations_build
+Destinations_build:
+	addiu	$sp,$sp,-416
+	sd	$ra,408($sp)
+	sq	$s0,384($sp)
+	sq	$s1,368($sp)
+	sq	$s2,352($sp)
+	sq	$s3,336($sp)
+	sq	$s4,320($sp)
+	sq	$s5,304($sp)
+	daddu	$s5,$a0,$zero
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	sw	$zero,0($t0)
+	sw	$zero,8($t0)
+	sw	$zero,12($t0)
+	addiu	$t0,$zero,DEST_CHECKPOINTS
+	bne	$s5,$t0,Destinations_build_entrances
+	sll	$zero,$zero,0x0
+	jal	Game_scopeBegin
+	daddu	$a0,$sp,$zero
+	addiu	$a0,$sp,4
+	jal	Game_enumCheckpoints
+	addiu	$a1,$sp,8
+	lw	$a0,8($sp)
+	lw	$a1,4($sp)
+	lui	$a3,%lo(Game_compareCheckpoints_rawHi)
+	ori	$a3,$a3,%lo(Game_compareCheckpoints)
+	addiu	$a2,$zero,4
+	jal	Game_sort
+	sll	$zero,$zero,0x0
+	lui	$t0,%lo(Game_currentCheckpoint_rawHi)
+	ori	$t0,$t0,%lo(Game_currentCheckpoint)
+	lw	$s4,0($t0)
+	beqz	$s4,Destinations_checkpoints_loop_setup
+	sll	$zero,$zero,0x0
+	daddu	$a0,$s4,$zero
+	jal	Destinations_append
+	addiu	$a1,$zero,1
+.global Destinations_checkpoints_loop_setup
+Destinations_checkpoints_loop_setup:
+	lw	$s0,8($sp)
+	lw	$s1,4($sp)
+.global Destinations_checkpoints_loop
+Destinations_checkpoints_loop:
+	beqz	$s1,Destinations_checkpoints_done
+	sll	$zero,$zero,0x0
+	lw	$s2,0($s0)
+	beq	$s2,$s4,Destinations_checkpoints_next
+	sll	$zero,$zero,0x0
+	lw	$t0,PROFILE_TASK_CHECKPOINT($s2)
+	addiu	$t1,$zero,-1
+	beq	$t0,$t1,Destinations_checkpoints_next
+	sll	$zero,$zero,0x0
+	daddu	$a0,$s2,$zero
+	jal	Destinations_append
+	daddu	$a1,$zero,$zero
+.global Destinations_checkpoints_next
+Destinations_checkpoints_next:
+	addiu	$s0,$s0,4
+	addiu	$s1,$s1,-1
+	beqz	$zero,Destinations_checkpoints_loop
+	sll	$zero,$zero,0x0
+.global Destinations_checkpoints_done
+Destinations_checkpoints_done:
+	daddu	$a0,$sp,$zero
+	jal	Game_scopeEnd
+	addiu	$a1,$zero,2
+	beqz	$zero,Destinations_build_finish
+	sll	$zero,$zero,0x0
+.global Destinations_build_entrances
+Destinations_build_entrances:
+	lui	$a0,%lo(Game_world_rawHi)
+	ori	$a0,$a0,%lo(Game_world)
+	addiu	$a1,$zero,5
+	addiu	$a2,$zero,PROFILE_ENTRANCE_CLASS
+	daddu	$a3,$zero,$zero
+	addiu	$t0,$zero,64
+	jal	Game_enumEntrances
+	addiu	$t1,$sp,0
+	daddu	$s1,$v0,$zero
+	sltiu	$t0,$s1,65
+	bnez	$t0,Destinations_entrances_bounded
+	sll	$zero,$zero,0x0
+	addiu	$s1,$zero,64
+.global Destinations_entrances_bounded
+Destinations_entrances_bounded:
+	daddu	$s0,$sp,$zero
+.global Destinations_entrances_loop
+Destinations_entrances_loop:
+	beqz	$s1,Destinations_entrances_sort
+	sll	$zero,$zero,0x0
+	lw	$a0,0($s0)
+	jal	Destinations_append
+	daddu	$a1,$zero,$zero
+	addiu	$s0,$s0,4
+	addiu	$s1,$s1,-1
+	beqz	$zero,Destinations_entrances_loop
+	sll	$zero,$zero,0x0
+.global Destinations_entrances_sort
+Destinations_entrances_sort:
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	lw	$a1,0($t0)
+	lui	$a0,%lo(Destinations_entries_rawHi)
+	ori	$a0,$a0,%lo(Destinations_entries)
+	lui	$a3,%lo(Destinations_compare_names_rawHi)
+	ori	$a3,$a3,%lo(Destinations_compare_names)
+	jal	Game_sort
+	addiu	$a2,$zero,64
+.global Destinations_build_finish
+Destinations_build_finish:
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	lw	$t1,12($t0)
+	beqz	$t1,Destinations_build_complete
+	sll	$zero,$zero,0x0
+	sw	$zero,0($t0)
+.global Destinations_build_complete
+Destinations_build_complete:
+	lw	$v0,0($t0)
+	bnez	$v0,Destinations_build_return
+	sll	$zero,$zero,0x0
+	addiu	$v0,$zero,1
+	sw	$v0,0($t0)
+	lui	$a0,%lo(Destinations_entries_rawHi)
+	ori	$a0,$a0,%lo(Destinations_entries)
+	sw	$zero,0($a0)
+	sw	$zero,4($a0)
+	sw	$zero,8($a0)
+	sw	$zero,12($a0)
+	sw	$zero,16($a0)
+	sw	$zero,20($a0)
+	sw	$zero,24($a0)
+	sw	$zero,28($a0)
+	sw	$zero,32($a0)
+	sw	$zero,36($a0)
+	sw	$zero,40($a0)
+	sw	$zero,44($a0)
+	sw	$zero,48($a0)
+	sw	$zero,52($a0)
+	sw	$zero,56($a0)
+	sw	$zero,60($a0)
+	lui	$a1,%lo(MenuData_noCheckpoints_rawHi)
+	ori	$a1,$a1,%lo(MenuData_noCheckpoints)
+	addiu	$t1,$zero,DEST_CHECKPOINTS
+	beq	$s5,$t1,Destinations_placeholder_ready
+	sll	$zero,$zero,0x0
+	lui	$a1,%lo(MenuData_noEntrances_rawHi)
+	ori	$a1,$a1,%lo(MenuData_noEntrances)
+.global Destinations_placeholder_ready
+Destinations_placeholder_ready:
+	lw	$t1,12($t0)
+	beqz	$t1,Destinations_placeholder_copy
+	sll	$zero,$zero,0x0
+	lui	$a1,%lo(MenuData_missingNames_rawHi)
+	ori	$a1,$a1,%lo(MenuData_missingNames)
+.global Destinations_placeholder_copy
+Destinations_placeholder_copy:
+	jal	Destinations_copy
+	addiu	$a2,$zero,47
+.global Destinations_build_return
+Destinations_build_return:
+	lq	$s0,384($sp)
+	lq	$s1,368($sp)
+	lq	$s2,352($sp)
+	lq	$s3,336($sp)
+	lq	$s4,320($sp)
+	lq	$s5,304($sp)
+	ld	$ra,408($sp)
+	jr	$ra
+	addiu	$sp,$sp,416
+.global Destinations_build_load
+Destinations_build_load:
+#if PROFILE_NATIVE_WORLD_LABELS
+	j NativeWorldsBridge_build
+	nop
+	.space 0x1FC-(.-Destinations_build_load),0
+#else
+	addiu	$sp,$sp,-144
+	sd	$ra,136($sp)
+	sq	$s0,112($sp)
+	sq	$s1,96($sp)
+	sq	$s2,80($sp)
+	sq	$s3,64($sp)
+	sq	$s4,48($sp)
+	sq	$s5,32($sp)
+	sq	$s6,16($sp)
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	sw	$zero,0($t0)
+	sw	$zero,8($t0)
+	sw	$zero,12($t0)
+	lui	$t0,%lo(Game_worldCount_rawHi)
+	ori	$t0,$t0,%lo(Game_worldCount)
+	lw	$s4,0($t0)
+	lw	$s5,8($t0)
+	beqz	$s5,Destinations_load_finish
+	sll	$zero,$zero,0x0
+	sltiu	$t1,$s4,257
+	beqz	$t1,Destinations_load_finish
+	sll	$zero,$zero,0x0
+	lui	$s0,%lo(Profile_worldCatalog_rawHi)
+	ori	$s0,$s0,%lo(Profile_worldCatalog)
+	addiu	$s1,$zero,43
+	lui	$s6,%lo(Destinations_entries_rawHi)
+	ori	$s6,$s6,%lo(Destinations_entries)
+.global Destinations_load_catalog_loop
+Destinations_load_catalog_loop:
+	daddu	$s2,$s5,$zero
+	daddu	$s3,$s4,$zero
+.global Destinations_load_descriptor_loop
+Destinations_load_descriptor_loop:
+	beqz	$s3,Destinations_load_catalog_next
+	sll	$zero,$zero,0x0
+	lw	$t0,8($s2)
+	lw	$t1,56($s2)
+	xor	$t0,$t0,$t1
+	lw	$t2,0($s0)
+	bne	$t0,$t2,Destinations_load_descriptor_next
+	sll	$zero,$zero,0x0
+	lw	$t0,4($s2)
+	lw	$t1,60($s2)
+	xor	$t0,$t0,$t1
+	lw	$t2,52($s0)
+	bne	$t0,$t2,Destinations_load_descriptor_next
+	sll	$zero,$zero,0x0
+	lw	$t0,0($s2)
+	lw	$t1,52($s2)
+	xor	$t0,$t0,$t1
+	addiu	$t0,$t0,3232
+	lw	$t2,56($s0)
+	bne	$t0,$t2,Destinations_load_descriptor_next
+	sll	$zero,$zero,0x0
+	sw	$zero,0($s6)
+	sw	$zero,4($s6)
+	sw	$zero,8($s6)
+	sw	$zero,12($s6)
+	sw	$zero,16($s6)
+	sw	$zero,20($s6)
+	sw	$zero,24($s6)
+	sw	$zero,28($s6)
+	sw	$zero,32($s6)
+	sw	$zero,36($s6)
+	sw	$zero,40($s6)
+	sw	$zero,44($s6)
+	sw	$zero,48($s6)
+	sw	$zero,52($s6)
+	sw	$zero,56($s6)
+	sw	$zero,60($s6)
+	sw	$s2,56($s6)
+	daddu	$a0,$s6,$zero
+	addiu	$a1,$s0,4
+	jal	Destinations_copy
+	addiu	$a2,$zero,47
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	lw	$t1,0($t0)
+	addiu	$t1,$t1,1
+	sw	$t1,0($t0)
+	addiu	$s6,$s6,64
+	beqz	$zero,Destinations_load_catalog_next
+	sll	$zero,$zero,0x0
+.global Destinations_load_descriptor_next
+Destinations_load_descriptor_next:
+	addiu	$s2,$s2,64
+	addiu	$s3,$s3,-1
+	beqz	$zero,Destinations_load_descriptor_loop
+	sll	$zero,$zero,0x0
+.global Destinations_load_catalog_next
+Destinations_load_catalog_next:
+	addiu	$s0,$s0,64
+	addiu	$s1,$s1,-1
+	bnez	$s1,Destinations_load_catalog_loop
+	sll	$zero,$zero,0x0
+.global Destinations_load_finish
+Destinations_load_finish:
+	lui	$t0,%lo(Destinations_count_rawHi)
+	ori	$t0,$t0,%lo(Destinations_count)
+	lw	$t1,0($t0)
+	bnez	$t1,Destinations_load_return
+	sll	$zero,$zero,0x0
+	addiu	$t1,$zero,1
+	sw	$t1,0($t0)
+	lui	$a0,%lo(Destinations_entries_rawHi)
+	ori	$a0,$a0,%lo(Destinations_entries)
+	sw	$zero,0($a0)
+	sw	$zero,4($a0)
+	sw	$zero,8($a0)
+	sw	$zero,12($a0)
+	sw	$zero,16($a0)
+	sw	$zero,20($a0)
+	sw	$zero,24($a0)
+	sw	$zero,28($a0)
+	sw	$zero,32($a0)
+	sw	$zero,36($a0)
+	sw	$zero,40($a0)
+	sw	$zero,44($a0)
+	sw	$zero,48($a0)
+	sw	$zero,52($a0)
+	sw	$zero,56($a0)
+	sw	$zero,60($a0)
+	lui	$a1,%lo(MenuData_noWorlds_rawHi)
+	ori	$a1,$a1,%lo(MenuData_noWorlds)
+	jal	Destinations_copy
+	addiu	$a2,$zero,47
+.global Destinations_load_return
+Destinations_load_return:
+	lq	$s0,112($sp)
+	lq	$s1,96($sp)
+	lq	$s2,80($sp)
+	lq	$s3,64($sp)
+	lq	$s4,48($sp)
+	lq	$s5,32($sp)
+	lq	$s6,16($sp)
+	ld	$ra,136($sp)
+	jr	$ra
+	addiu	$sp,$sp,144
+#endif

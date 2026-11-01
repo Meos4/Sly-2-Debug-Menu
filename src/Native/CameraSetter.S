@@ -1,0 +1,64 @@
+.set noreorder
+.set noat
+.set gp=64
+.set hardfloat
+.option pic0
+.section .native.CameraSetter,"ax",@progbits
+.global CameraSetter_start
+CameraSetter_start:
+	addiu	$sp,$sp,-64
+	addiu	$v0,$zero,-1
+	sq	$s0,48($sp)
+	sq	$s1,32($sp)
+	daddu	$s0,$a0,$zero
+	sq	$s2,16($sp)
+	sd	$ra,0($sp)
+	bne	$a1,$v0,.L_ensureController
+	sw	$a1,16($s0)
+	lui	$v1,%lo(Game_nativeCamera_signedHi)
+	lui	$v0,%lo(Game_removeController_signedHi)
+	addiu	$v0,$v0,%lo(Game_removeController)
+	addiu	$a0,$v1,%lo(Game_nativeCamera)
+	addiu	$a1,$zero,1
+	addiu	$a2,$zero,10
+	daddu	$a3,$zero,$zero
+	daddu	$t0,$zero,$zero
+	daddu	$t1,$zero,$zero
+	jalr	$v0
+	daddu	$s2,$v1,$zero
+	beqz	$zero,.L_dirtyCamera
+	lui	$v0,%lo(Game_dirtyCamera_signedHi)
+.L_ensureController:
+	lui	$v1,%lo(Game_nativeCamera_signedHi)
+	lui	$v0,%lo(CameraQuery_start_signedHi)
+	addiu	$s1,$v1,%lo(Game_nativeCamera)
+	addiu	$v0,$v0,%lo(CameraQuery_start)
+	daddu	$a0,$s1,$zero
+	addiu	$a1,$zero,10
+	daddu	$a2,$s0,$zero
+	daddu	$a3,$zero,$zero
+	daddu	$t0,$zero,$zero
+	jalr	$v0
+	daddu	$s2,$v1,$zero
+	bnez	$v0,.L_dirtyCamera
+	lui	$v0,%lo(Game_dirtyCamera_signedHi)
+	lui	$v0,%lo(Game_addController_signedHi)
+	daddu	$a0,$s1,$zero
+	daddu	$a2,$s0,$zero
+	addiu	$v0,$v0,%lo(Game_addController)
+	addiu	$a1,$zero,10
+	daddu	$a3,$zero,$zero
+	jalr	$v0
+	daddu	$t0,$zero,$zero
+	lui	$v0,%lo(Game_dirtyCamera_signedHi)
+.L_dirtyCamera:
+	addiu	$v0,$v0,%lo(Game_dirtyCamera)
+	jalr	$v0
+	addiu	$a0,$s2,%lo(Game_nativeCamera)
+	lq	$s0,48($sp)
+	lq	$s1,32($sp)
+	lq	$s2,16($sp)
+	ld	$ra,0($sp)
+	jr	$ra
+	addiu	$sp,$sp,64
+	sll	$zero,$zero,0x0

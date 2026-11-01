@@ -1,0 +1,14 @@
+{
+  "id": "NtscU",
+  "crc": "07652DD9",
+  "title": "Sly 2 NTSC-U",
+  "header": "Profiles/NtscU/NtscU.h",
+  "offsets_header": "Profiles/NtscU/NtscUOffsets.h",
+  "linker": "src/Profiles/NtscU/NtscU.ld",
+  "sources": [
+    "src/Profiles/NtscU/NtscUWorlds.c"
+  ],
+  "output": "build",
+  "serial": "SCUS_973.16",
+  "build": "0813.0032"
+}

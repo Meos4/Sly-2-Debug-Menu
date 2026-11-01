@@ -1,0 +1,13 @@
+#ifndef SLY_PAL201_H
+#define SLY_PAL201_H
+
+#include "Pal201Offsets.h"
+
+#define CLOCK 0x2E52D0u
+#define WORLD 0x3E4C90u
+#define VOICE_MANAGER 0x3E4870u
+#define SUBTITLE_MANAGER 0x44ADD0u
+#define ACTIVE_CHARACTER 0x3E8B8Cu
+#define NATIVE_CAMERA 0x2E5340u
+#define PROFILE_BUILD_TITLE "Sly 2 \251 2004 SCEA/SPP (1006.2123)"
+#endif

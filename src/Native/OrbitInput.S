@@ -1,0 +1,47 @@
+.set noreorder
+.set noat
+.set gp=64
+.set hardfloat
+.option pic0
+.section .native.OrbitInput,"ax",@progbits
+.global OrbitInput_start
+OrbitInput_start:
+	addiu	$sp,$sp,-64
+	sq	$t0,16($sp)
+	sq	$t1,32($sp)
+	sd	$ra,48($sp)
+	lui	$t0,%lo(Game_realPad_rawHi)
+	ori	$t0,$t0,%lo(Game_realPad)
+	bne	$a0,$t0,.L_otherPad
+	sll	$zero,$zero,0x0
+	lui	$t0,%lo(Orbit_pending_rawHi)
+	ori	$t0,$t0,%lo(Orbit_pending)
+	lw	$t1,0($t0)
+	and	$t1,$t1,$a1
+	sw	$t1,56($sp)
+	sw	$zero,0($t0)
+	lui	$t0,%lo(Orbit_activity_rawHi)
+	ori	$t0,$t0,%lo(Orbit_activity)
+	lw	$t1,0($t0)
+	addiu	$t1,$t1,1
+	sw	$t1,0($t0)
+	lw	$t1,56($sp)
+	beqz	$t1,.L_consumeOrbitButtons
+	sll	$zero,$zero,0x0
+	sw	$t1,4($t0)
+.L_consumeOrbitButtons:
+	jal	Game_consumeButtons
+	sll	$zero,$zero,0x0
+	lw	$v0,56($sp)
+	lq	$t0,16($sp)
+	lq	$t1,32($sp)
+	ld	$ra,48($sp)
+	jr	$ra
+	addiu	$sp,$sp,64
+.L_otherPad:
+	lq	$t0,16($sp)
+	lq	$t1,32($sp)
+	ld	$ra,48($sp)
+	addiu	$sp,$sp,64
+	j	Game_consumeButtons
+	sll	$zero,$zero,0x0

@@ -1,0 +1,13 @@
+#ifndef SLY_NTSCJ_H
+#define SLY_NTSCJ_H
+
+#include "NtscJOffsets.h"
+
+#define CLOCK 0x2E7150u
+#define WORLD 0x3E6C90u
+#define VOICE_MANAGER 0x3E6870u
+#define SUBTITLE_MANAGER 0x44CFE0u
+#define ACTIVE_CHARACTER 0x3EAD8Cu
+#define NATIVE_CAMERA 0x2E71C0u
+#define PROFILE_BUILD_TITLE "Sly 2 \251 2004 SCEA/SPP (0121.1144)"
+#endif

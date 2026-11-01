@@ -1,0 +1,17 @@
+{
+  "id": "NtscJ",
+  "crc": "615EA2DB",
+  "title": "Sly 2 NTSC-J",
+  "header": "Profiles/NtscJ/NtscJ.h",
+  "offsets_header": "Profiles/NtscJ/NtscJOffsets.h",
+  "linker": "src/Profiles/NtscJ/NtscJ.ld",
+  "sources": [
+    "src/Profiles/Common/NativeWorlds.c",
+    "src/Profiles/Common/NativeWorldsBridge.S",
+    "src/Profiles/Common/WideText.S",
+    "src/Profiles/Common/WorldNamesNtscJK.c"
+  ],
+  "output": "build",
+  "serial": "SCPS_150.90",
+  "build": "0121.1144"
+}
