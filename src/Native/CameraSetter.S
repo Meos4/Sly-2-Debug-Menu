@@ -1,3 +1,5 @@
+/* March uses 10, above the game's cameras (9), retail raised those to 10, so use 11 to stay on top */
+#define CAMERA_CONTROLLER_PRIORITY 11
 .set noreorder
 .set noat
 .set gp=64
@@ -20,7 +22,7 @@ CameraSetter_start:
 	addiu	$v0,$v0,%lo(Game_removeController)
 	addiu	$a0,$v1,%lo(Game_nativeCamera)
 	addiu	$a1,$zero,1
-	addiu	$a2,$zero,10
+	addiu	$a2,$zero,CAMERA_CONTROLLER_PRIORITY
 	daddu	$a3,$zero,$zero
 	daddu	$t0,$zero,$zero
 	daddu	$t1,$zero,$zero
@@ -34,7 +36,7 @@ CameraSetter_start:
 	addiu	$s1,$v1,%lo(Game_nativeCamera)
 	addiu	$v0,$v0,%lo(CameraQuery_start)
 	daddu	$a0,$s1,$zero
-	addiu	$a1,$zero,10
+	addiu	$a1,$zero,CAMERA_CONTROLLER_PRIORITY
 	daddu	$a2,$s0,$zero
 	daddu	$a3,$zero,$zero
 	daddu	$t0,$zero,$zero
@@ -46,7 +48,7 @@ CameraSetter_start:
 	daddu	$a0,$s1,$zero
 	daddu	$a2,$s0,$zero
 	addiu	$v0,$v0,%lo(Game_addController)
-	addiu	$a1,$zero,10
+	addiu	$a1,$zero,CAMERA_CONTROLLER_PRIORITY
 	daddu	$a3,$zero,$zero
 	jalr	$v0
 	daddu	$t0,$zero,$zero
