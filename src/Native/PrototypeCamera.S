@@ -31,8 +31,8 @@ PrototypeCamera_start:
 	sq	$s7,208($sp)
 	sq	$s8,192($sp)
 	sd	$ra,176($sp)
-	jalr	$v0
-	daddu	$s4,$a2,$zero
+	lui	$s4,%lo(Game_realPad_rawHi)
+	ori	$s4,$s4,%lo(Game_realPad)
 	mtc1	$zero,$f26
 	lwc1	$f3,PROFILE_PAD_RIGHT_X($s4)
 	lui	$s0,%lo(CameraPressure_start_signedHi)
