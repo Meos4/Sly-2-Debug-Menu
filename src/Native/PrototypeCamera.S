@@ -8,9 +8,9 @@
 .global PrototypeCamera_start
 PrototypeCamera_start:
 	addiu	$sp,$sp,-416
-	lui	$v0,%lo(Camera_noop_signedHi)
+	lui	$v0,%lo(CameraPad_start_signedHi)
 	sq	$s3,272($sp)
-	addiu	$v0,$v0,%lo(Camera_noop)
+	addiu	$v0,$v0,%lo(CameraPad_start)
 	sq	$s4,256($sp)
 	daddu	$s3,$a0,$zero
 	sq	$s0,320($sp)
@@ -31,8 +31,8 @@ PrototypeCamera_start:
 	sq	$s7,208($sp)
 	sq	$s8,192($sp)
 	sd	$ra,176($sp)
-	lui	$s4,%lo(Game_realPad_rawHi)
-	ori	$s4,$s4,%lo(Game_realPad)
+	jalr	$v0
+	daddu	$s4,$a2,$zero
 	mtc1	$zero,$f26
 	lwc1	$f3,PROFILE_PAD_RIGHT_X($s4)
 	lui	$s0,%lo(CameraPressure_start_signedHi)

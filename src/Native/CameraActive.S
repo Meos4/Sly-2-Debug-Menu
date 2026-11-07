@@ -37,3 +37,16 @@ PadFold_start:
 .L_foldCompared:
 	jr	$ra
 	sll	$zero,$zero,0x0
+
+.global CameraPad_start
+CameraPad_start:
+	lui	$v0,%lo(Menu_open_rawHi)
+	ori	$v0,$v0,%lo(Menu_open)
+	lw	$v0,0($v0)
+	bnez	$v0,.L_padChosen
+	sll	$zero,$zero,0x0
+	lui	$s4,%lo(Game_realPad_rawHi)
+	ori	$s4,$s4,%lo(Game_realPad)
+.L_padChosen:
+	jr	$ra
+	sll	$zero,$zero,0x0

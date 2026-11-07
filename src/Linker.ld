@@ -248,6 +248,7 @@ Orbit_pending = (__patchBase + 0x6D90);
 Orbit_pending_rawHi = (Orbit_pending) >> 16;
 CameraPressure_start_signedHi = (CameraPressure_start + 0x8000) >> 16;
 Camera_noop_signedHi = (Camera_noop + 0x8000) >> 16;
+CameraPad_start_signedHi = (CameraPad_start + 0x8000) >> 16;
 CameraQuery_start_signedHi = (CameraQuery_start + 0x8000) >> 16;
 Pad_capture = (__patchBase + 0x7F00);
 Pad_capture_rawHi = (Pad_capture) >> 16;
