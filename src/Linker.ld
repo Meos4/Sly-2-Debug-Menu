@@ -46,7 +46,7 @@ SECTIONS {
     .native.OrbitInput (__patchBase + 0x5D00) : { KEEP(*(.native.OrbitInput)) }
     ASSERT(SIZEOF(.native.OrbitInput) == 0x94, "OrbitInput instruction layout changed")
     .native.MrdReset (__patchBase + 0x5E00) : { KEEP(*(.native.MrdReset)) }
-    ASSERT(SIZEOF(.native.MrdReset) == 0x44, "MrdReset instruction layout changed")
+    ASSERT(SIZEOF(.native.MrdReset) == 0x50, "MrdReset instruction layout changed")
     .native.PrototypeCamera (__patchBase + 0x7000) : { KEEP(*(.native.PrototypeCamera)) }
     ASSERT(SIZEOF(.native.PrototypeCamera) == 0x7B0, "PrototypeCamera instruction layout changed")
     .native.CameraPressure (__patchBase + 0x7800) : { KEEP(*(.native.CameraPressure)) }

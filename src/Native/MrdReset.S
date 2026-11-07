@@ -18,6 +18,9 @@ MrdReset_start:
 	ori	$t0,$t0,%lo(Mrd_mode)
 	addiu	$t1,$zero,-1
 	sw	$t1,0($t0)
+	lui	$t0,%lo(Camera_controller_rawHi)
+	ori	$t0,$t0,%lo(Camera_controller)
+	sw	$zero,PROFILE_CONTROLLER_TARGET($t0)
 .L_resumeCameraReset:
 	lq	$t0,0($sp)
 	lq	$t1,16($sp)
